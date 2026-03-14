@@ -304,7 +304,7 @@ export default function PropertyDetail() {
           {/* Main Content (70%) */}
           <div className="w-full lg:w-[65%] xl:w-[70%] space-y-8">
             <div className="border-b pb-8">
-              <h1 className="font-display text-4xl font-bold tracking-tight text-slate-900 dark:text-slate-50 mb-2">{property.name}</h1>
+              <h1 className="font-display text-4xl font-bold tracking-tight text-slate-900 dark:text-white mb-2">{property.name}</h1>
               <p className="text-lg text-slate-500 dark:text-slate-400 mb-6 font-medium">MOA Complex · {property.floor}</p>
               
               <div className="flex flex-wrap items-center gap-4 text-sm font-medium">
@@ -331,7 +331,7 @@ export default function PropertyDetail() {
             </div>
 
             <div className="border-b pb-8">
-              <h2 className="text-xl font-bold tracking-tight text-slate-900 dark:text-slate-50 mb-4">About this space</h2>
+              <h2 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white mb-4">About this space</h2>
               <p className="text-slate-600 dark:text-slate-300 leading-relaxed text-lg">{property.description}</p>
             </div>
 
@@ -381,7 +381,7 @@ export default function PropertyDetail() {
               {step === 1 && (
                 <div className="animate-in fade-in slide-in-from-right-4 duration-300">
                   <div className="mb-6">
-                    <p className="text-2xl font-bold font-display text-slate-900 dark:text-slate-50 tracking-tight">
+                    <p className="text-2xl font-bold font-display text-slate-900 dark:text-white tracking-tight">
                       ₱{property.pricePerNight.toLocaleString()} <span className="text-sm font-normal text-slate-500 dark:text-slate-400 font-sans">night</span>
                     </p>
                     {pricing && pricing.discount > 0 && (
@@ -399,11 +399,11 @@ export default function PropertyDetail() {
                       <PopoverTrigger asChild>
                         <button className="w-full flex items-center justify-between p-3 border-b border-slate-300 text-left hover:bg-slate-50 transition-colors">
                           <div>
-                            <span className="block text-[10px] font-bold uppercase text-slate-900 dark:text-slate-50 tracking-wider">Check-in</span>
+                            <span className="block text-[10px] font-bold uppercase text-slate-900 dark:text-white tracking-wider">Check-in</span>
                             <span className="text-sm text-slate-500 dark:text-slate-400">{dateRange?.from ? format(dateRange.from, 'MM/dd/yyyy') : 'Add date'}</span>
                           </div>
                           <div className="border-l border-slate-300 pl-3">
-                            <span className="block text-[10px] font-bold uppercase text-slate-900 dark:text-slate-50 tracking-wider">Checkout</span>
+                            <span className="block text-[10px] font-bold uppercase text-slate-900 dark:text-white tracking-wider">Checkout</span>
                             <span className="text-sm text-slate-500 dark:text-slate-400">{dateRange?.to ? format(dateRange.to, 'MM/dd/yyyy') : 'Add date'}</span>
                           </div>
                         </button>
@@ -421,7 +421,7 @@ export default function PropertyDetail() {
                     </Popover>
                     
                     <div className="p-3">
-                      <Label htmlFor="guests" className="block text-[10px] font-bold uppercase text-slate-900 dark:text-slate-50 tracking-wider mb-1">Guests</Label>
+                      <Label htmlFor="guests" className="block text-[10px] font-bold uppercase text-slate-900 dark:text-white tracking-wider mb-1">Guests</Label>
                       <select 
                         id="guests" 
                         value={guests} 

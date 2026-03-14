@@ -85,12 +85,12 @@ export default function PropertyCard({ property, isFeaturedBento }: Props) {
       <div className={`flex flex-col flex-1 ${isFeaturedBento ? 'p-6 lg:p-10 justify-center' : 'p-5'}`}>
         <div className="mb-4">
           <div className="flex items-center justify-between mb-1">
-            <h3 className={`font-display font-bold text-slate-900 dark:text-slate-50 transition-colors group-hover:text-primary ${isFeaturedBento ? 'text-2xl lg:text-3xl' : 'text-lg'}`}>
+            <h3 className={`font-display font-bold text-slate-900 dark:text-white transition-colors group-hover:text-primary ${isFeaturedBento ? 'text-2xl lg:text-3xl' : 'text-lg'}`}>
               {property.name}
             </h3>
             <div className="flex items-center gap-1 text-amber-500">
               <Star className="h-3.5 w-3.5 fill-current" />
-              <span className="text-xs font-bold text-slate-900 dark:text-slate-50">{property.rating ?? '4.8'}</span>
+              <span className="text-xs font-bold text-slate-900 dark:text-white">{property.rating ?? '4.8'}</span>
             </div>
           </div>
           <p className="text-xs font-medium text-emerald-600 dark:text-emerald-400 italic">

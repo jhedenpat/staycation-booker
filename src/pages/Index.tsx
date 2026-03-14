@@ -192,10 +192,10 @@ const Index = () => {
             <Badge variant="outline" className="mb-6 border-primary/30 text-primary bg-primary/5 px-3 py-1 text-xs">
               Direct Booking Exclusive
             </Badge>
-            <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl font-bold mb-6 leading-[1.05] tracking-tight text-slate-900 dark:text-slate-50">
+            <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl font-bold mb-6 leading-[1.05] tracking-tight text-slate-900 dark:text-white">
               Stay in the <span className="text-secondary dark:text-primary italic">Heart</span> of MOA.
             </h1>
-            <p className="text-slate-600 dark:text-slate-300 text-xl mb-12 max-w-md leading-relaxed">
+            <p className="text-slate-600 dark:text-white/70 text-xl mb-12 max-w-md leading-relaxed">
               Discover a curated collection of premium residences, hand-picked for quality and comfort.
             </p>
             <div className="flex flex-wrap gap-4">
@@ -281,8 +281,8 @@ const Index = () => {
       <section id="units" className="bg-slate-50 dark:bg-background border-t border-border/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
           <div className="mb-12 text-center">
-            <h2 className="font-display text-4xl font-bold text-slate-900 dark:text-slate-50 tracking-tight mb-4">Available Units</h2>
-            <p className="text-slate-500 dark:text-slate-300 text-lg max-w-2xl mx-auto">Discover our collection of 5-star units, each verified for quality and comfort.</p>
+            <h2 className="font-display text-4xl font-bold text-slate-900 dark:text-white tracking-tight mb-4">Available Units</h2>
+            <p className="text-slate-500 dark:text-white/60 text-lg max-w-2xl mx-auto">Discover our collection of 5-star units, each verified for quality and comfort.</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filtered.map((p, index) => (
