@@ -14,6 +14,8 @@ import HostDashboard from "./pages/HostDashboard";
 import GuestDashboard from "./pages/GuestDashboard";
 import NotFound from "./pages/NotFound";
 import { ThemeProvider } from "next-themes";
+import Footer from "@/components/Footer";
+import ConciergeChatBubble from "@/components/ConciergeChatBubble";
 
 const queryClient = new QueryClient();
 
@@ -36,6 +38,8 @@ const App = () => (
                   <Route path="/guest/dashboard/:bookingId" element={<GuestDashboard />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
+                <Footer />
+                <ConciergeChatBubble />
               </BrowserRouter>
             </WaitlistProvider>
           </BookingProvider>

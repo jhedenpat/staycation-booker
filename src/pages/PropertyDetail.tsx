@@ -8,9 +8,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { format, differenceInDays, addDays, isBefore, isSameDay } from 'date-fns';
-import { ArrowLeft, Users, Bed, Wifi, ChefHat, Waves, Eye, Clock, Zap, Bell, CheckCircle2, Star, Award, ChevronDown, CalendarIcon, View, Maximize, X, ChevronLeft, ChevronRight, PlayCircle, ShieldCheck } from 'lucide-react';
+import { ArrowLeft, Users, Bed, Wifi, ChefHat, Waves, Eye, Clock, Zap, Bell, CheckCircle2, Star, Award, ChevronDown, CalendarIcon, View, Maximize, X, ChevronLeft, ChevronRight, PlayCircle, ShieldCheck, CigaretteOff, VolumeX } from 'lucide-react';
 import { DateRange } from 'react-day-picker';
 import heroImg from '@/assets/hero-staycation.jpg';
 import unitImg from '@/assets/unit-preview.jpg';
@@ -20,6 +20,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { getDynamicPrice, isGapFillerDate } from '@/lib/pricing';
 import LocationNeighborhood from '@/components/LocationNeighborhood';
+import MobileStickyBar from '@/components/MobileStickyBar';
+import TermsAndConditionsModal from '@/components/TermsAndConditionsModal';
+import houseRulesPoster from '@/assets/house_rules_poster.png';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import HouseRulesUI from '@/components/HouseRulesUI';
 
 const amenityIcons: Record<string, React.ReactNode> = {
   'King Bed': <Bed className="h-4 w-4" />,
@@ -132,12 +137,27 @@ export default function PropertyDetail() {
   const [guestPhone, setGuestPhone] = useState('');
   const [guests, setGuests] = useState(1);
   const [step, setStep] = useState(1);
+  const [showTerms, setShowTerms] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [showWaitlist, setShowWaitlist] = useState(false);
   
   // Gallery State
   const [galleryOpen, setGalleryOpen] = useState(false);
   const [photoIndex, setPhotoIndex] = useState(0);
+
+  // Mobile sticky bar: detect when booking widget is on-screen
+  const bookingWidgetRef = useRef<HTMLDivElement>(null);
+  const [widgetVisible, setWidgetVisible] = useState(false);
+  useEffect(() => {
+    const el = bookingWidgetRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => setWidgetVisible(entry.isIntersecting),
+      { threshold: 0.3 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
 
   const property = properties.find(p => p.id === id);
 
@@ -261,7 +281,7 @@ export default function PropertyDetail() {
           <img src={galleryImages[0]} alt={property.name} className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent opacity-90 pointer-events-none" />
           <div className="absolute bottom-24 left-4 z-10 flex gap-3 flex-col items-start text-white">
-            <Badge className="bg-emerald-500/20 text-emerald-300 border-emerald-500/30 backdrop-blur-md flex gap-1.5 items-center px-2.5 py-1">
+            <Badge className="bg-emerald-500/20 text-emerald-100 dark:text-emerald-300 border-emerald-500/30 backdrop-blur-md flex gap-1.5 items-center px-2.5 py-1">
               <ShieldCheck className="w-3.5 h-3.5" /> Verified Property
             </Badge>
             <span className="font-semibold tracking-wide drop-shadow-md">650 sq ft</span>
@@ -275,7 +295,7 @@ export default function PropertyDetail() {
             <img loading="lazy" src={galleryImages[0]} alt={property.name} className="w-full h-full object-cover transition-transform duration-700 hover:scale-105" />
             <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/10 to-transparent opacity-80 pointer-events-none" />
             <div className="absolute bottom-6 left-6 z-10 flex items-center gap-4 text-white">
-              <Badge className="bg-emerald-500/20 text-emerald-300 border-emerald-500/30 backdrop-blur-md flex gap-1.5 items-center px-3 py-1.5 shadow-lg">
+              <Badge className="bg-emerald-500/20 text-emerald-100 dark:text-emerald-300 border-emerald-500/30 backdrop-blur-md flex gap-1.5 items-center px-3 py-1.5 shadow-lg">
                 <ShieldCheck className="w-4 h-4" /> Verified Property
               </Badge>
               <span className="font-semibold tracking-widest text-sm text-white/90 uppercase drop-shadow-md">650 sq ft</span>
@@ -351,6 +371,52 @@ export default function PropertyDetail() {
               </div>
             </div>
 
+            {/* ── House Rules Section ── */}
+            <div className="border-b pb-12">
+              <h2 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white mb-6">House Rules</h2>
+              <div className="rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 shadow-sm bg-slate-50 dark:bg-slate-900/40 mb-8 max-w-2xl">
+                <img 
+                  src={houseRulesPoster} 
+                  alt="House Rules and Terms" 
+                  className="w-full h-auto"
+                />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <div className="flex gap-4 items-start">
+                    <div className="p-2 rounded-lg bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400"><Clock className="h-5 w-5" /></div>
+                    <div>
+                      <p className="font-bold text-sm dark:text-white">Check-in / Out</p>
+                      <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Check-in: 2:00 PM • Checkout: 12:00 PM</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-4 items-start">
+                    <div className="p-2 rounded-lg bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400"><Users className="h-5 w-5" /></div>
+                    <div>
+                      <p className="font-bold text-sm dark:text-white">Max Occupancy</p>
+                      <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Strictly enforced per unit type</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  <div className="flex gap-4 items-start">
+                    <div className="p-2 rounded-lg bg-orange-50 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400"><CigaretteOff className="h-5 w-5" /></div>
+                    <div>
+                      <p className="font-bold text-sm dark:text-white">No Smoking</p>
+                      <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">₱5,000 penalty for violation</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-4 items-start">
+                    <div className="p-2 rounded-lg bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400"><VolumeX className="h-5 w-5" /></div>
+                    <div>
+                      <p className="font-bold text-sm dark:text-white">Quiet Hours</p>
+                      <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">No noise or parties after 10:00 PM</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <div className="pb-8 hidden xl:block">
               <h2 className="text-xl font-bold tracking-tight text-slate-900 mb-6">Ratings & Reviews</h2>
               <div className="flex gap-16 mb-8">
@@ -368,7 +434,7 @@ export default function PropertyDetail() {
 
           {/* Fixed Booking Widget (30%) */}
           <div className="w-full lg:w-[35%] xl:w-[30%]">
-            <div className="bg-background rounded-2xl p-6 border shadow-sm sticky top-28 bottom-0 lg:bottom-auto z-50 lg:z-auto">
+            <div ref={bookingWidgetRef} className="bg-background rounded-2xl p-6 border shadow-sm sticky top-28 bottom-0 lg:bottom-auto z-50 lg:z-auto">
               
               {/* Progress Indicator */}
               <div className="flex items-center justify-between mb-8 relative px-2">
@@ -526,17 +592,39 @@ export default function PropertyDetail() {
                     </div>
                   </div>
                   
-                  <form onSubmit={handleSubmit}>
-                    <Button type="submit" className="w-full bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300 shadow-xl shadow-primary/20" size="lg" disabled={submitting}>
-                      {submitting ? 'Processing...' : 'Confirm Reservation'}
-                    </Button>
-                  </form>
+                  <Button 
+                    type="button" 
+                    className="w-full bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300 shadow-xl shadow-primary/20" 
+                    size="lg" 
+                    disabled={submitting}
+                    onClick={() => setShowTerms(true)}
+                  >
+                    {submitting ? 'Processing...' : 'Confirm Reservation'}
+                  </Button>
+
+                  <TermsAndConditionsModal 
+                    isOpen={showTerms}
+                    onClose={() => setShowTerms(false)}
+                    onAccept={() => {
+                      setShowTerms(false);
+                      handleSubmit({ preventDefault: () => {} } as any);
+                    }}
+                  />
                 </div>
               )}
             </div>
           </div>
         </div>
       </div>
+
+      {/* Mobile Sticky Booking Bar */}
+      <MobileStickyBar
+        pricePerNight={property.pricePerNight}
+        widgetVisible={widgetVisible}
+        onBookNow={() => {
+          bookingWidgetRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }}
+      />
     </div>
   );
 }

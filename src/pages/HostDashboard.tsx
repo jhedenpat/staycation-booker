@@ -6,18 +6,19 @@ import { properties } from '@/data/properties';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { format, addDays, isBefore, isSameDay, eachDayOfInterval, startOfMonth, endOfMonth, addMonths, differenceInDays } from 'date-fns';
-import { LogOut, CalendarDays, Users, Building2, Zap, Bell, TrendingUp, ChevronRight, Home, CreditCard, Menu, X } from 'lucide-react';
+import { LogOut, CalendarDays, Users, Building2, Zap, Bell, TrendingUp, ChevronRight, Home, CreditCard, Menu, X, LayoutGrid } from 'lucide-react';
 import { useMemo, useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { findGaps } from '@/lib/pricing';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import UnitInventoryView from '@/components/UnitInventoryView';
 
 export default function HostDashboard() {
   const { isAuthenticated, logout } = useAuth();
   const { bookings, updateBookingStatus } = useBookings();
   const { entries: waitlistEntries } = useWaitlist();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<'bookings' | 'calendar' | 'waitlist'>('bookings');
+  const [activeTab, setActiveTab] = useState<'bookings' | 'calendar' | 'waitlist' | 'inventory'>('bookings');
   const [dateRange, setDateRange] = useState<'month' | 'quarter' | 'year'>('month');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -134,7 +135,7 @@ export default function HostDashboard() {
             </div>
 
             <nav className="flex flex-col gap-2">
-              {(['bookings', 'calendar', 'waitlist'] as const).map(tab => (
+              {(['bookings', 'calendar', 'waitlist', 'inventory'] as const).map(tab => (
                 <button
                   key={tab}
                   onClick={() => { setActiveTab(tab); setIsMobileMenuOpen(false); }}
@@ -148,7 +149,8 @@ export default function HostDashboard() {
                   {tab === 'bookings' && <CalendarDays className="h-4 w-4" />}
                   {tab === 'calendar' && <Building2 className="h-4 w-4" />}
                   {tab === 'waitlist' && <Bell className="h-4 w-4" />}
-                  <span className="capitalize">{tab === 'calendar' ? 'Multi-Calendar' : tab}</span>
+                  {tab === 'inventory' && <LayoutGrid className="h-4 w-4" />}
+                  <span className="capitalize">{tab === 'calendar' ? 'Multi-Calendar' : tab === 'inventory' ? 'Unit Inventory' : tab}</span>
                 </button>
               ))}
             </nav>
@@ -169,6 +171,17 @@ export default function HostDashboard() {
           {/* Main Content */}
           <div className="flex-1 min-w-0 space-y-12 sm:space-y-16 animate-in fade-in slide-in-from-bottom-4 duration-500">
             
+            {/* ── Unit Inventory Tab ── */}
+            {activeTab === 'inventory' && (
+              <div className="space-y-2">
+                <div className="mb-6">
+                  <h2 className="text-2xl font-black text-foreground tracking-tight">Unit Inventory</h2>
+                  <p className="text-sm text-muted-foreground mt-1">Real-time status of all managed units</p>
+                </div>
+                <UnitInventoryView bookings={bookings} />
+              </div>
+            )}
+
             {/* SaaS Metrics Row */}
             {activeTab === 'bookings' && (
               <div className="space-y-6">

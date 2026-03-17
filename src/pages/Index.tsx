@@ -1,4 +1,6 @@
 import { Link } from 'react-router-dom';
+import { useBookings } from '@/context/BookingContext';
+import { isWithinInterval, startOfDay } from 'date-fns';
 import { properties } from '@/data/properties';
 import PropertyCard from '@/components/PropertyCard';
 import heroImg from '@/assets/hero-staycation.jpg';
@@ -165,14 +167,32 @@ const VIBES = [
 const Index = () => {
   const [showProof, setShowProof] = useState(false);
   const [activeVibe, setActiveVibe] = useState<string | null>(null);
+  const { bookings } = useBookings();
+  const today = startOfDay(new Date());
+
+  const checkAvailability = (propertyId: string) => {
+    return !bookings.some(b => 
+      b.propertyId === propertyId && 
+      b.status === 'confirmed' && 
+      isWithinInterval(today, { start: startOfDay(new Date(b.checkIn)), end: startOfDay(new Date(b.checkOut)) })
+    );
+  };
 
   useEffect(() => {
     const timer = setTimeout(() => setShowProof(true), 3000);
     return () => clearTimeout(timer);
   }, []);
 
+  // Map every unit to at least one vibe category explicitly
+  const vibeMapping: Record<string, string[]> = {
+    'city': ['moa-102', 'moa-203', 'moa-302', 'moa-303'],
+    'mall': ['moa-101', 'moa-103', 'moa-202', 'moa-301'],
+    'business': ['moa-102', 'moa-201', 'moa-203', 'moa-303'],
+    'hidden': ['moa-101', 'moa-103', 'moa-201', 'moa-202', 'moa-301', 'moa-302'],
+  };
+
   const filtered = activeVibe 
-    ? properties.filter(p => p.amenities.some(a => a.toLowerCase().includes(activeVibe))) // Simple vibe mapping for demo
+    ? properties.filter(p => vibeMapping[activeVibe]?.includes(p.id))
     : properties;
 
   return (
@@ -225,17 +245,17 @@ const Index = () => {
                 initial={{ opacity: 0, y: 20, x: -20 }}
                 animate={{ opacity: 1, y: 0, x: 0 }}
                 exit={{ opacity: 0, y: 10 }}
-                className="absolute bottom-12 left-12 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md rounded-2xl p-4 shadow-2xl border border-white/20 flex items-center gap-4 max-w-sm z-30"
+                className="absolute bottom-12 left-12 bg-white/95 dark:bg-amber-950/95 backdrop-blur-md rounded-2xl p-4 shadow-2xl border border-white/20 dark:border-amber-500/30 flex items-center gap-4 max-w-sm z-30"
               >
                 <div className="relative flex min-w-10 min-h-10 items-center justify-center">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-20"></span>
-                  <div className="bg-green-100 dark:bg-green-900/30 p-2.5 rounded-full">
-                    <BellRing className="h-5 w-5 text-green-600 dark:text-green-400" />
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-400 opacity-20 dark:opacity-40"></span>
+                  <div className="bg-amber-100 dark:bg-amber-900/50 p-2.5 rounded-full border border-amber-200 dark:border-amber-700/50">
+                    <BellRing className="h-5 w-5 text-amber-600 dark:text-amber-400" />
                   </div>
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-slate-900 dark:text-white">High Demand!</p>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">3 people booked a unit in MOA within the last hour.</p>
+                  <p className="text-sm font-semibold text-slate-900 dark:text-slate-50">High Demand!</p>
+                  <p className="text-xs text-slate-500 dark:text-amber-200/70 mt-0.5">3 people booked a unit in MOA within the last hour.</p>
                 </div>
                 <button onClick={() => setShowProof(false)} className="absolute top-2 right-2 text-slate-400 hover:text-slate-600">
                   <span className="sr-only">Close</span>
@@ -286,7 +306,7 @@ const Index = () => {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filtered.map((p, index) => (
-              <PropertyCard key={p.id} property={p} isFeaturedBento={false} />
+              <PropertyCard key={p.id} property={p} isFeaturedBento={false} isAvailable={checkAvailability(p.id)} />
             ))}
           </div>
           {filtered.length === 0 && (

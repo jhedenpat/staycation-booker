@@ -17,9 +17,10 @@ import { useState } from 'react';
 interface Props {
   property: Property;
   isFeaturedBento?: boolean;
+  isAvailable?: boolean;
 }
 
-export default function PropertyCard({ property, isFeaturedBento }: Props) {
+export default function PropertyCard({ property, isFeaturedBento, isAvailable = true }: Props) {
   const navigate = useNavigate();
   const [showQuickLook, setShowQuickLook] = useState(false);
 
@@ -36,13 +37,20 @@ export default function PropertyCard({ property, isFeaturedBento }: Props) {
         
         {/* Top Right Overlays */}
         <div className="absolute top-3 right-3 flex flex-col items-end gap-2 z-10">
-          <Badge className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md text-slate-900 dark:text-white border-none shadow-sm px-2 py-1 text-[10px] font-bold">
+          <Badge className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md text-slate-900 dark:text-slate-100 border-none shadow-sm px-2 py-1 text-[10px] font-bold">
             ₱{property.pricePerNight.toLocaleString()} <span className="font-normal opacity-70">/ night</span>
           </Badge>
-          <div className="bg-emerald-500/90 text-white px-2 py-0.5 rounded-full flex items-center gap-1 shadow-lg backdrop-blur-sm">
-            <CheckCircle2 className="h-3 w-3" />
-            <span className="text-[10px] font-bold uppercase tracking-wider">Verified</span>
-          </div>
+          {isAvailable ? (
+            <div className="bg-emerald-100 dark:bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 px-2 py-0.5 rounded-full flex items-center gap-1 shadow-sm backdrop-blur-md border border-emerald-200 dark:border-emerald-500/30">
+              <CheckCircle2 className="h-3 w-3" />
+              <span className="text-[10px] font-bold uppercase tracking-wider">Available</span>
+            </div>
+          ) : (
+            <div className="bg-rose-100 dark:bg-rose-950/80 text-rose-800 dark:text-rose-300 px-2 py-0.5 rounded-full flex items-center gap-1 shadow-sm backdrop-blur-md border border-rose-200 dark:border-rose-800/60">
+              <div className="w-1.5 h-1.5 rounded-full bg-rose-500 dark:bg-rose-400" />
+              <span className="text-[10px] font-bold uppercase tracking-wider">Booked</span>
+            </div>
+          )}
         </div>
 
         {/* Quick Look Overlay (Visible on Hover) */}
@@ -93,7 +101,7 @@ export default function PropertyCard({ property, isFeaturedBento }: Props) {
               <span className="text-xs font-bold text-slate-900 dark:text-white">{property.rating ?? '4.8'}</span>
             </div>
           </div>
-          <p className="text-xs font-medium text-emerald-600 dark:text-emerald-400 italic">
+          <p className="text-xs font-medium text-slate-500 dark:text-slate-300 italic">
             "{property.bestFeature ?? 'Premium experience with a view'}"
           </p>
         </div>

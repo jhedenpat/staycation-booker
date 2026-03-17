@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { MapPin, Star, ExternalLink, PersonStanding, Car, Train, Utensils, Camera, Navigation } from 'lucide-react';
+import { ExternalLink, PersonStanding, Car, Train, Utensils, Camera, Navigation } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
@@ -49,17 +49,6 @@ const NEIGHBORHOOD_DATA: NeighborhoodCategory[] = [
   },
 ];
 
-// Decorative map POI dots
-const MAP_DOTS = [
-  { x: '20%',  y: '30%', label: 'Bay Area', size: 3 },
-  { x: '75%',  y: '20%', label: 'Marina',   size: 2 },
-  { x: '30%',  y: '70%', label: 'Terminal', size: 3 },
-  { x: '80%',  y: '65%', label: 'Market',   size: 2 },
-  { x: '55%',  y: '80%', label: 'Park',     size: 2 },
-  { x: '10%',  y: '55%', label: 'Port',     size: 4 },
-  { x: '88%',  y: '40%', label: 'Hotel',    size: 2 },
-];
-
 interface LocationNeighborhoodProps {
   propertyName: string;
   rating?: number | string;
@@ -99,166 +88,17 @@ export default function LocationNeighborhood({ propertyName, rating = 4.9 }: Loc
       {/* Main two-column layout */}
       <div className="flex flex-col lg:flex-row gap-5">
 
-        {/* ── CUSTOM CSS DARK MAP ── */}
-        <div
-          className="relative flex-1 rounded-2xl overflow-hidden border border-[#1e293b] min-h-[300px] lg:min-h-[380px] cursor-pointer"
-          style={{
-            background: 'linear-gradient(135deg, #0a1628 0%, #0f2040 40%, #0a1e35 100%)',
-          }}
-        >
-          {/* Grid lines (street network simulation) */}
-          <svg
-            className="absolute inset-0 w-full h-full opacity-20"
-            xmlns="http://www.w3.org/2000/svg"
-            preserveAspectRatio="none"
-          >
-            {/* Horizontal streets */}
-            {[15, 28, 42, 55, 68, 80].map(y => (
-              <line key={`h${y}`} x1="0" y1={`${y}%`} x2="100%" y2={`${y}%`} stroke="#3b82f6" strokeWidth="0.8" />
-            ))}
-            {/* Vertical streets */}
-            {[12, 25, 38, 50, 62, 75, 88].map(x => (
-              <line key={`v${x}`} x1={`${x}%`} y1="0" x2={`${x}%`} y2="100%" stroke="#3b82f6" strokeWidth="0.8" />
-            ))}
-            {/* Diagonal roads */}
-            <line x1="0" y1="100%" x2="60%" y2="0" stroke="#60a5fa" strokeWidth="1.2" opacity="0.4" />
-            <line x1="40%" y1="100%" x2="100%" y2="20%" stroke="#60a5fa" strokeWidth="1.2" opacity="0.4" />
-            {/* Bay water area */}
-            <ellipse cx="15%" cy="50%" rx="12%" ry="22%" fill="#1e3a5f" opacity="0.5" />
-            {/* Block fills */}
-            <rect x="24%" y="14%" width="13%" height="13%" rx="1" fill="#0f2a4a" opacity="0.7" />
-            <rect x="50%" y="27%" width="11%" height="12%" rx="1" fill="#0f2a4a" opacity="0.7" />
-            <rect x="74%" y="14%" width="13%" height="12%" rx="1" fill="#0f2a4a" opacity="0.7" />
-            <rect x="24%" y="41%" width="13%" height="13%" rx="1" fill="#0f2a4a" opacity="0.7" />
-            <rect x="62%" y="41%" width="11%" height="12%" rx="1" fill="#0f2a4a" opacity="0.7" />
-            <rect x="38%" y="54%" width="11%" height="13%" rx="1" fill="#0f2a4a" opacity="0.7" />
-            <rect x="74%" y="54%" width="13%" height="11%" rx="1" fill="#0f2a4a" opacity="0.7" />
-            <rect x="24%" y="67%" width="13%" height="12%" rx="1" fill="#0f2a4a" opacity="0.7" />
-            <rect x="50%" y="67%" width="11%" height="11%" rx="1" fill="#0f2a4a" opacity="0.7" />
-            <rect x="38%" y="14%" width="11%" height="13%" rx="1" fill="#0f2a4a" opacity="0.7" />
-          </svg>
+        {/* ── REAL MAP (OpenStreetMap embed) ── */}
+        <div className="relative rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 shadow-md" style={{ width: '460px', height: '400px', flexShrink: 0, margin: '0 auto' }}>
 
-          {/* Water shimmer */}
-          <div
-            className="absolute"
-            style={{
-              left: '3%', top: '28%', width: '24%', height: '44%',
-              background: 'radial-gradient(ellipse at center, rgba(30,80,140,0.55) 0%, rgba(10,22,40,0) 70%)',
-              borderRadius: '50%',
-            }}
+          {/* OSM Iframe — marker is built into the URL, no overlays needed */}
+          <iframe
+            title="MOA Property Location"
+            src="https://www.openstreetmap.org/export/embed.html?bbox=120.9800%2C14.5320%2C120.9910%2C14.5420&layer=mapnik&marker=14.5358,120.9841"
+            className="absolute inset-0 w-full h-full border-0"
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
           />
-
-          {/* Small POI dots */}
-          {MAP_DOTS.map(dot => (
-            <div
-              key={dot.label}
-              className="absolute rounded-full bg-blue-400/60"
-              style={{
-                left: dot.x,
-                top: dot.y,
-                width: dot.size * 3,
-                height: dot.size * 3,
-                transform: 'translate(-50%,-50%)',
-                boxShadow: '0 0 6px 2px rgba(96,165,250,0.4)',
-              }}
-            />
-          ))}
-
-          {/* ── Pulse Marker (MOA property) ── */}
-          <div
-            className="absolute z-20 cursor-pointer"
-            style={{ left: '50%', top: '46%', transform: 'translate(-50%, -50%)' }}
-            onMouseEnter={() => setShowMarkerCard(true)}
-            onMouseLeave={() => setShowMarkerCard(false)}
-          >
-            {/* Rings */}
-            <span className="absolute rounded-full bg-primary/15 animate-ping"
-              style={{ width: 56, height: 56, top: -20, left: -20 }} />
-            <span className="absolute rounded-full bg-primary/25 animate-ping"
-              style={{ width: 40, height: 40, top: -12, left: -12, animationDelay: '0.4s' }} />
-
-            {/* Core pin */}
-            <motion.div
-              whileHover={{ scale: 1.2 }}
-              transition={{ type: 'spring', stiffness: 400, damping: 18 }}
-              className="relative z-10 flex items-center justify-center w-9 h-9 bg-primary rounded-full shadow-2xl ring-2 ring-white/90"
-              style={{ boxShadow: '0 0 0 4px rgba(59,130,246,0.3), 0 8px 24px rgba(59,130,246,0.5)' }}
-            >
-              <MapPin className="h-4 w-4 text-white fill-white" />
-            </motion.div>
-
-            {/* Hover mini-card */}
-            <AnimatePresence>
-              {showMarkerCard && (
-                <motion.div
-                  initial={{ opacity: 0, y: 8, scale: 0.95 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: 4, scale: 0.95 }}
-                  transition={{ duration: 0.15 }}
-                  className="absolute z-30 pointer-events-none"
-                  style={{ bottom: '110%', left: '50%', transform: 'translateX(-50%)', marginBottom: 8 }}
-                >
-                  <div
-                    className="rounded-xl px-4 py-2.5 text-center min-w-[170px] shadow-2xl"
-                    style={{
-                      background: 'rgba(10,22,40,0.92)',
-                      backdropFilter: 'blur(16px)',
-                      WebkitBackdropFilter: 'blur(16px)',
-                      border: '1px solid rgba(255,255,255,0.12)',
-                    }}
-                  >
-                    <p className="text-white text-xs font-bold leading-tight">{propertyName}</p>
-                    <div className="flex items-center justify-center gap-1 mt-1">
-                      <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
-                      <span className="text-amber-400 text-xs font-bold">{rating}</span>
-                      <span className="text-white/40 text-xs">· MOA Complex</span>
-                    </div>
-                    {/* Arrow */}
-                    <div
-                      className="absolute left-1/2 -translate-x-1/2 bottom-0 translate-y-full w-0 h-0"
-                      style={{
-                        borderLeft: '6px solid transparent',
-                        borderRight: '6px solid transparent',
-                        borderTop: '6px solid rgba(10,22,40,0.92)',
-                      }}
-                    />
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-
-          {/* Map label overlays */}
-          <div className="absolute top-4 left-5 text-[10px] font-semibold text-blue-300/70 uppercase tracking-widest">
-            Manila Bay
-          </div>
-          <div className="absolute bottom-12 right-10 text-[9px] font-medium text-slate-400/60 uppercase tracking-wider">
-            Pasay City
-          </div>
-
-          {/* Glassmorphism 'View in Google Maps' button */}
-          <a
-            href={gmapsUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="absolute bottom-4 right-4 z-20 flex items-center gap-2 px-3.5 py-2 rounded-xl text-white text-xs font-semibold transition-all hover:scale-105 active:scale-95"
-            style={{
-              background: 'rgba(10,22,40,0.75)',
-              backdropFilter: 'blur(12px)',
-              WebkitBackdropFilter: 'blur(12px)',
-              border: '1px solid rgba(255,255,255,0.14)',
-              boxShadow: '0 4px 20px rgba(0,0,0,0.4)',
-            }}
-          >
-            <ExternalLink className="h-3.5 w-3.5 opacity-70" />
-            View in Google Maps
-          </a>
-
-          {/* Scale bar */}
-          <div className="absolute bottom-4 left-4 flex items-center gap-2">
-            <div className="h-[2px] w-10 bg-white/30 rounded" />
-            <span className="text-white/40 text-[10px] font-mono">500m</span>
-          </div>
         </div>
 
         {/* ── NEIGHBORHOOD HIGHLIGHTS SIDEBAR ── */}
