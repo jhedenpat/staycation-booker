@@ -19,6 +19,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { getDynamicPrice, isGapFillerDate } from '@/lib/pricing';
+import LocationNeighborhood from '@/components/LocationNeighborhood';
 
 const amenityIcons: Record<string, React.ReactNode> = {
   'King Bed': <Bed className="h-4 w-4" />,
@@ -335,6 +336,8 @@ export default function PropertyDetail() {
               <h2 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white mb-4">About this space</h2>
               <p className="text-slate-600 dark:text-slate-300 leading-relaxed text-lg">{property.description}</p>
             </div>
+
+            <LocationNeighborhood propertyName={property.name} rating={property.rating} />
 
             <div className="border-b pb-8">
               <h2 className="text-xl font-bold tracking-tight text-slate-900 mb-6">What this place offers</h2>
