@@ -620,7 +620,7 @@ export default function PropertyDetail() {
 
                   <Button 
                     type="button" 
-                    className="w-full bg-slate-900 text-white hover:bg-slate-800 transition-all duration-300 shadow-xl" 
+                    className="w-full transition-all duration-300 shadow-xl" 
                     size="lg" 
                     onClick={() => navigate('/')}
                   >
