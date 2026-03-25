@@ -197,7 +197,7 @@ export default function PropertyDetail() {
     );
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!dateRange?.from || !dateRange?.to) {
       toast.error('Please select check-in and check-out dates');
@@ -209,7 +209,7 @@ export default function PropertyDetail() {
     }
 
     setSubmitting(true);
-    const result = addBooking({
+    const result = await addBooking({
       propertyId: property.id,
       guestName,
       guestEmail,
@@ -581,9 +581,9 @@ export default function PropertyDetail() {
                   <TermsAndConditionsModal 
                     isOpen={showTerms}
                     onClose={() => setShowTerms(false)}
-                    onAccept={() => {
+                    onAccept={async () => {
                       setShowTerms(false);
-                      handleSubmit({ preventDefault: () => {} } as any);
+                      await handleSubmit({ preventDefault: () => {} } as React.FormEvent);
                     }}
                   />
                 </div>
